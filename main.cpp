@@ -1,16 +1,17 @@
 #include <iostream>
 #include <stdio.h>
 #include <chrono>
-#include <thread>
 
-#include "C:\Program Files (x86)\Lua\5.1\include\lua.hpp"
-#include "C:\Program Files (x86)\Lua\5.1\include\lauxlib.h"
+#include <../../../../../../../Lua/5.1/include/lua.hpp>
+
+#include "KleinbergProtocol.h"
 
 using namespace std;
 
+int rows, cols;
 
 // Função para executar o script Lua e o contador
-void executarLuaEContador() {
+int LuaVM() {
     // Iniciar Lua
     lua_State *L = luaL_newstate();
     luaL_openlibs(L);
@@ -20,23 +21,33 @@ void executarLuaEContador() {
         fprintf(stderr, "Erro: %s\n", lua_tostring(L, -1));
     }
 
+    lua_getglobal(L, "rows");
+    rows = lua_tonumber(L, -1);
+    lua_pop(L, 1);
+
+    lua_getglobal(L, "cols");
+    cols = lua_tonumber(L, -1);
+    lua_pop(L, 1);
+
     lua_close(L);
 }
 
+
 // Função principal
 int main() {
-    auto inicio = chrono::high_resolution_clock::now();
 
-    // Criar uma thread para executar o Lua e o contador
-    std::thread t(executarLuaEContador);
+    LuaVM();
 
-    // Esperar a thread terminar
-    t.join();
+    KleinbergProtocol kleinberg(rows, cols);
 
-    auto fim = chrono::high_resolution_clock::now();
-    chrono::duration<double> duration = fim - inicio;
+    //inicializa o torus e cria o Kleinberg Node
+    kleinberg.drawGrid();
+    
+    kleinberg.drawNeighbour(rows, cols);
 
-    cout << "Tempo de execução: " << duration.count() << " segundos" << endl;
+    
+
+    cout << "[FIM]" << endl;
 
     system("PAUSE");
     return 0;

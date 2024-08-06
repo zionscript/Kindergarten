@@ -1,7 +1,11 @@
-function contadorSimples()
-    local max = 1000000
+function nodeDomain()
+    local max = 0
     for i = 0, max do
-        print(i)
+        print("[NODE DOMAIN] [".. os.date() .."]" )
     end
 end
-contadorSimples()
+
+_G.rows = 20
+_G.cols = 20;
+
+nodeDomain()
